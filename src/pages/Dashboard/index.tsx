@@ -1,68 +1,98 @@
-import React from 'react';
+import React, { useState, useEffect, FormEvent } from 'react';
 import { FiChevronRight } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
+import api from '../../services/api';
 
 import logoImg from '../../assets/github-logo.svg';
 
-import { Title, Form, Repositories } from './styles';
+import { Title, Form, Repositories, Error } from './styles';
 
-const Dashboard: React.FC = () => (
-    <>
-        <img src={logoImg} alt="GitHub Explorer" />
-        <Title>Explore repositórios no GitHub</Title>
+interface Repository {
+    full_name: string;
+    owner: {
+        login: string;
+        avatar_url: string;
+    };
+    description: string;
+}
 
-        <Form action="">
-            <input placeholder="Digite o nome do repositório" />
-            <button type="submit">Pesquisar</button>
-        </Form>
+const Dashboard: React.FC = () => {
+    const [newRepo, setNewRepo] = useState('');
+    const [inputError, setInputError] = useState('');
+    const [repositories, setRepositories] = useState<Repository[]>(() => {
+        const storagedRepositories = localStorage.getItem(
+            '@GitHubExplorer:repositories',
+        );
 
-        <Repositories>
-            <a href="teste">
-                <img
-                    src="https://avatars.githubusercontent.com/u/55299115?s=460&u=48f15a7b9cabe08a78e4971724a3b5e1f7ca715d&v=4"
-                    alt="Lucas Basso"
+        if (storagedRepositories) {
+            return JSON.parse(storagedRepositories);
+        }
+
+        return [];
+    });
+
+    useEffect(() => {
+        localStorage.setItem(
+            '@GitHubExplorer:repositories',
+            JSON.stringify(repositories),
+        );
+    }, [repositories]);
+
+    async function handleAddRepository(event: FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+        if (!newRepo) {
+            setInputError('Digite o autor/nome do repositório');
+            return;
+        }
+
+        try {
+            const response = await api.get<Repository>(`repos/${newRepo}`);
+            const repository = response.data;
+
+            setRepositories([...repositories, repository]);
+            setNewRepo('');
+            setInputError('');
+        } catch (err) {
+            setInputError('Erro na busca por esse repositório!');
+        }
+    }
+
+    return (
+        <>
+            <img src={logoImg} alt="GitHub Explorer" />
+            <Title>Explore repositórios no GitHub</Title>
+
+            <Form hasError={!!inputError} onSubmit={handleAddRepository}>
+                <input
+                    value={newRepo}
+                    onChange={e => setNewRepo(e.target.value)}
+                    placeholder="Digite o nome do repositório"
                 />
-                <div>
-                    <strong>lucasrbasso/happy</strong>
-                    <p>
-                        Projeto Next Level Week 3 - Happy, com propósito de
-                        facilitar o visitamento de Casas de Acolhimento e
-                        cadastro das mesmas.
-                    </p>
-                </div>
-                <FiChevronRight size={20} />
-            </a>
-            <a href="teste">
-                <img
-                    src="https://avatars.githubusercontent.com/u/55299115?s=460&u=48f15a7b9cabe08a78e4971724a3b5e1f7ca715d&v=4"
-                    alt="Lucas Basso"
-                />
-                <div>
-                    <strong>lucasrbasso/happy</strong>
-                    <p>
-                        Projeto Next Level Week 3 - Happy, com propósito de
-                        facilitar o visitamento de Casas de Acolhimento e
-                        cadastro das mesmas.
-                    </p>
-                </div>
-                <FiChevronRight size={20} />
-            </a>
-            <a href="teste">
-                <img
-                    src="https://avatars.githubusercontent.com/u/55299115?s=460&u=48f15a7b9cabe08a78e4971724a3b5e1f7ca715d&v=4"
-                    alt="Lucas Basso"
-                />
-                <div>
-                    <strong>lucasrbasso/happy</strong>
-                    <p>
-                        Projeto Next Level Week 3 - Happy, com propósito de
-                        facilitar o visitamento de Casas de Acolhimento e
-                        cadastro das mesmas.
-                    </p>
-                </div>
-                <FiChevronRight size={20} />
-            </a>
-        </Repositories>
-    </>
-);
+                <button type="submit">Pesquisar</button>
+            </Form>
+
+            {inputError && <Error>{inputError}</Error>}
+
+            <Repositories>
+                {repositories.map(repository => (
+                    <Link
+                        key={repository.full_name}
+                        to={`/repositories/${repository.full_name}`}
+                    >
+                        <img
+                            src={repository.owner.avatar_url}
+                            alt={repository.owner.login}
+                        />
+                        <div>
+                            <strong>{repository.full_name}</strong>
+                            <p>{repository.description}</p>
+                        </div>
+                        <FiChevronRight size={20} />
+                    </Link>
+                ))}
+            </Repositories>
+        </>
+    );
+};
 
 export default Dashboard;
