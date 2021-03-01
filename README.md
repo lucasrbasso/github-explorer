@@ -14,7 +14,7 @@ Esse projeto foi desenvolvido com as seguintes tecnologias:
  - [Axios](https://github.com/axios/axios)
  - [Typescript](https://www.typescriptlang.org)
  - [CSS3](https://developer.mozilla.org/pt-BR/docs/Web/CSS)
- - [GitHubApi](https://docs.github.com/en/rest)
+ - [GitHub Api](https://docs.github.com/en/rest)
 
 **To work**:
 
