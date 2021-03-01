@@ -9,7 +9,9 @@ GitHub explorer is a web app developed in React in the **11 GoStack Bootcamp**, 
 
 ## Stacks and how to open:
 
-Esse projeto foi desenvolvido com as seguintes tecnologias:
+
+This project was developed by the following technologies:
+
  - [ReactJs](https://pt-br.reactjs.org/)
  - [Axios](https://github.com/axios/axios)
  - [Typescript](https://www.typescriptlang.org)
@@ -25,4 +27,4 @@ console@bar:/GitHub/github-explorer:~$ yarn start
 
 Open http://localhost:3000 to see the results.
 
-Desenvolvido com ♥ por **Lucas Basso** durante o **GoStack Bootcamp.**
+Made with ♥ by **Lucas Basso** during **GoStack Bootcamp.**
