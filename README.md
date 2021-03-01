@@ -1,7 +1,8 @@
 ## GitHub Explorer
 
 <p align="center">
-  <img alt="explorer" src="/gitHubExplorer.png" width="100%">
+  <img alt="explorer" src="/github/gitHub-explorer.png" width="100%">
+  <img alt="explorer" src="/github/github-facebook.png" width="100%">
 </p>
 
 
